@@ -1,0 +1,25 @@
+From 9882b08fbf1c47b100388d663152addb9d3120ea Mon Sep 17 00:00:00 2001
+From: Zhang Fuxin <fxzhang@ict.ac.cn>
+Date: Thu, 4 Mar 2021 23:02:54 +0800
+Subject: [PATCH 4/4] use http instead of https to support localhost server
+
+---
+ model/Storage.inc.php | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/model/Storage.inc.php b/model/Storage.inc.php
+index d37cf62..d4abc78 100644
+--- a/model/Storage.inc.php
++++ b/model/Storage.inc.php
+@@ -302,7 +302,7 @@ class Zotero_Storage {
+ 	
+ 	
+ 	public static function getUploadBaseURL() {
+-		return "https://" . Z_CONFIG::$S3_BUCKET . ".s3.amazonaws.com/";
++		return "http://" . Z_CONFIG::$S3_ENDPOINT . "/" . Z_CONFIG::$S3_BUCKET . "/";
+ 	}
+ 	
+ 	
+-- 
+2.25.1
+

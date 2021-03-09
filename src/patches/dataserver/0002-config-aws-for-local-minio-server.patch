@@ -1,0 +1,26 @@
+From f808d999bce72b47cc20ba9556f8cd7684779265 Mon Sep 17 00:00:00 2001
+From: Zhang Fuxin <fxzhang@ict.ac.cn>
+Date: Thu, 4 Mar 2021 23:00:58 +0800
+Subject: [PATCH 2/4] config aws for local minio server
+
+---
+ include/header.inc.php | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/include/header.inc.php b/include/header.inc.php
+index 11ce756..0faa350 100644
+--- a/include/header.inc.php
++++ b/include/header.inc.php
+@@ -209,6 +209,9 @@ $awsConfig = [
+ 	'region' => !empty(Z_CONFIG::$AWS_REGION) ? Z_CONFIG::$AWS_REGION : 'us-east-1',
+ 	'version' => 'latest',
+ 	'signature' => 'v4',
++	'use_path_style_endpoint' => true,
++	'endpoint' => 'http://' . Z_CONFIG::$S3_ENDPOINT,
++        'scheme' => 'http',
+ 	'http' => [
+ 		'timeout' => 3
+ 	],
+-- 
+2.25.1
+

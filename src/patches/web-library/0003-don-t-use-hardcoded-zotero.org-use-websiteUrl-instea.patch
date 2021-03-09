@@ -1,0 +1,34 @@
+From 91aaec910413cf3d48dbb80673b775f314f69ec6 Mon Sep 17 00:00:00 2001
+From: Zhang Fuxin <fxzhang@ict.ac.cn>
+Date: Thu, 4 Mar 2021 23:22:49 +0800
+Subject: [PATCH 3/3] don't use hardcoded zotero.org, use ${websiteUrl} instead
+
+---
+ src/js/utils.js | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/js/utils.js b/src/js/utils.js
+index a02f6d5e..b7e44490 100644
+--- a/src/js/utils.js
++++ b/src/js/utils.js
+@@ -73,7 +73,7 @@ const deduplicateByHash = (array, hasher) => {
+ };
+ 
+ const getItemCanonicalUrl = ({ libraryKey, itemKey }) =>
+-	`http://zotero.org/${libraryKey.startsWith('u') ? 'user' : 'groups'}/${libraryKey.slice(1)}/items/${itemKey}`;
++	`${websiteUrl}${libraryKey.startsWith('u') ? 'user' : 'groups'}/${libraryKey.slice(1)}/items/${itemKey}`;
+ 
+ const mapRelationsToItemKeys = (relations, libraryKey, relationType='dc:relation', shouldRemoveEmpty = true) => {
+ 	if(!('dc:relation' in relations)) {
+@@ -82,7 +82,7 @@ const mapRelationsToItemKeys = (relations, libraryKey, relationType='dc:relation
+ 	var relatedUrls = Array.isArray(relations[relationType]) ? relations[relationType] : [relations[relationType]];
+ 
+ 	const relatedItemKeys = relatedUrls.map(relatedUrl => {
+-		let match = relatedUrl.match(`https?://zotero.org/(?:users|groups)/${libraryKey.slice(1)}/items/([A-Z0-9]{8})`);
++		let match = relatedUrl.match(`https?://localhost:8080/(?:users|groups)/${libraryKey.slice(1)}/items/([A-Z0-9]{8})`);
+ 		return match ? match[1] : null;
+ 	});
+ 
+-- 
+2.25.1
+

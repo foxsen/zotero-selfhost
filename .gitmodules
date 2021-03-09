@@ -1,0 +1,21 @@
+[submodule "server/tinymce-clean-server"]
+	path = src/server/tinymce-clean-server
+	url = https://github.com/zotero/tinymce-clean-server
+[submodule "server/stream-server"]
+	path = src/server/stream-server
+	url = https://github.com/zotero/stream-server
+[submodule "server/dataserver"]
+	path = src/server/dataserver
+	url = https://github.com/zotero/dataserver
+[submodule "client/zotero-client"]
+	path = src/client/zotero-client
+	url = https://github.com/zotero/zotero
+[submodule "client/zotero-build"]
+	path = src/client/zotero-build
+	url = https://github.com/zotero/zotero-build
+[submodule "client/zotero-standalone-build"]
+	path = src/client/zotero-standalone-build
+	url = https://github.com/zotero/zotero-standalone-build
+[submodule "client/web-library"]
+	path = src/client/web-library
+	url = https://github.com/zotero/web-library

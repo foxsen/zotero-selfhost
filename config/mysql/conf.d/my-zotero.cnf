@@ -1,0 +1,4 @@
+[mysqld]
+sql_mode = ''
+max_connections = 1000
+
