@@ -2,8 +2,18 @@
 
 Zotero Selfhost is a full packaged repository aimed to make on-premise [Zotero](https://www.zotero.org) deployment easier with the last versions of both Zotero client and server. It started from the work of Samuel Hassine: https://github.com/SamuelHassine/zotero-prime.git. Major changes include:
 
-* Reorganize directories. All client codes are put into client/, server codes are put into server/
-*  
+* Reorganize directories 
+    - All source codes are put into src, client code in src/client, server code in /src/server. Modifications to the original source is maintained as patches in ./pachtes.
+    - Dockerfile & docker-composer.yml are put in top level because we want to be able to copy the necessary source into container instead of mapping host direct to container volumes. This avoid polluting source directories with node_modules and other compile results.
+    - some runtime configurations & scripts used by docker images are put in config/, and mapping to docker volumes by docker-composer.
+    - we use some utility scripts to help patch/update the official sources.
+
+* necessary fixes 
+    - mysql upgrade to 5.7 due to the need of large key size support. utf8mb4 needs large key size, zotero-prime choose to change it into utf8 but it might lead to issues.
+    - add mysql server params (set sql_mode) to deal with syntax compatible issues. e.g. allow the use of zero dates.
+    - adjust some default parameters of dataserver to avoid web-library rate/concurrency limit errors.
+    - use ubuntu 18.04 as default app-zotero base image. Avoid dependence on third party PPA repositories(they are often slow or even unvailable for the author). Build stream-server & tinymce-clean-serve into image instead of building them at run time. Add missing actions to get rid of some warnings. Add useful packages like vim
+    - ...
 
 ## the Zotero eco-system
 
@@ -22,7 +32,7 @@ There are two types of clients. One is the zotero client downloadable from zoter
 ### important concepts
 
 * connector. Zoteror connectors are some browser plugins that provide the ability to sense data from web pages. they enable us to save web data into zotero(through zotero client or directly to online zotero database).
-* translator. The zotero client contains many translators, they allow Zotero to save items from webpages, import and export items in various file formats (e.g. BibTeX, RIS, etc.), and look up items when given identifiers (e.g. DOIs or PubMed IDs). 
+* translator. The zotero client contains many translators, they allow Zotero to extract information from webpages, import and export items in various file formats (e.g. BibTeX, RIS, etc.), and look up items when given identifiers (e.g. DOIs or PubMed IDs). 
 * library. Just like the physical library, it is used to store informations like books, articles, documents and more.
 * collection/subcollection. Items in Zotero libraries can be organized with collections and tags. Collections allow hierarchical organization of items into groups and subgroups. The same item can belong to multiple collections and subcollections in your library at the same item. Collections are useful for filing items in meaningful groups (e.g., items for a particular project, from a specific source, on a specific topic, or for a particular course). You can import items directly to a specific collection or add them to collections after they are already in your library.
 * tags. Tags (often called “keywords” in other contexts) allow for detailed characterization of an item. You can tag items based on their topics, methods, status, ratings, or even based on your own workflow (e.g., “to-read”). Items can have as many tags as you like, and you can filter your library (or a specific collection) to show items having a specific set of one or more tags.  Tags are portable, but collections are not. Copying items between Zotero libraries (My Library and group libraries) will transfer their tags, but not their collection placements. Both organizational methods have unique advantages and features. Experiment with both to see what works best for your own workflow.
@@ -36,18 +46,20 @@ There are two types of clients. One is the zotero client downloadable from zoter
 $ sudo apt install npm
 ```
 
-*Clone the repository (with **--recursive**)*:
+*Clone the repository (with **--recursive** because there are multiple level of submodules)*:
 ```bash
 $ mkdir /path/to/your/app && cd /path/to/your/app
-$ git clone --recursive https://github.com/SamuelHassine/zotero-prime.git
-$ cd zotero-prime
+$ git clone --recursive <reporitory url here>
+$ cd zotero-selfhost
 ```
 
 *Configure and run*:
 ```bash
-$ cd docker
 $ sudo docker-compose up -d
 ```
+docker-compose will pull(mysql, minio, redis, localstack, elasticsearch, memcached, phpadmin) or build(app-zotero) all necessary docker images for you.
+
+app-zotero is the main container for dataserver/stream-server/tinymce-clean-server.
 
 ### Initialize databases
 
@@ -62,6 +74,7 @@ $ cd ..
 | Name          | URL                                           |
 | ------------- | --------------------------------------------- |
 | Zotero API    | http://localhost:8080                         |
+| Stream ws     | ws://localhost:8081                         |
 | S3 Web UI     | http://localhost:8082                         |
 | PHPMyAdmin    | http://localhost:8083                         |
 
@@ -104,3 +117,15 @@ $ ./staging/Zotero_VERSION/zotero(.exe)
 | Name          | Login                    | Password           |
 | ------------- | ------------------------ | ------------------ |
 | Zotero        | admin                    | admin              |
+
+## deployment
+
+TODO.
+
+## server management
+
+TODO.
+
+## TODO
+
+### user management 
