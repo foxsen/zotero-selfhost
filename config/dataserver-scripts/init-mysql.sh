@@ -27,11 +27,11 @@ echo "INSERT INTO shards VALUES (1, 1, 'zotero_shard_1', 'up', '1');" | $MYSQL z
 echo "INSERT INTO shards VALUES (2, 1, 'zotero_shard_2', 'up', '1');" | $MYSQL zotero_master
 
 # Create first group & user
-echo "INSERT INTO libraries VALUES (1, 'user', '2000-01-01 00:00:00', 0, 1)" | $MYSQL zotero_master
-echo "INSERT INTO libraries VALUES (2, 'group', '2000-01-01 00:00:00', 0, 2)" | $MYSQL zotero_master
-echo "INSERT INTO users VALUES (1, 1, 'admin', '2000-01-01 00:00:00', '2000-01-01 00:00:00')" | $MYSQL zotero_master
-echo "INSERT INTO `groups` VALUES (1, 2, 'Shared', 'shared', 'Private', 'members', 'all', 'members', '', '', 0, '2000-01-01 00:00:00', '2000-01-01 00:00:00', 1)" | $MYSQL zotero_master
-echo "INSERT INTO groupUsers VALUES (1, 1, 'owner', '2000-01-01 00:00:00', '2000-01-01 00:00:00')" | $MYSQL zotero_master
+echo "INSERT INTO libraries VALUES (1, 'user', CURRENT_TIMESTAMP, 0, 1)" | $MYSQL zotero_master
+echo "INSERT INTO libraries VALUES (2, 'group', CURRENT_TIMESTAMP, 0, 2)" | $MYSQL zotero_master
+echo "INSERT INTO users VALUES (1, 1, 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)" | $MYSQL zotero_master
+echo "INSERT INTO groups VALUES (1, 2, 'Shared', 'shared', 'Private', 'members', 'all', 'members', '', '', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 1)" | $MYSQL zotero_master
+echo "INSERT INTO groupUsers VALUES (1, 1, 'owner', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)" | $MYSQL zotero_master
 
 # Load in www schema
 $MYSQL zotero_www < www.sql
@@ -48,8 +48,8 @@ cat triggers.sql | $MYSQL zotero_shard_1
 cat shard.sql | $MYSQL zotero_shard_2
 cat triggers.sql | $MYSQL zotero_shard_2
 
-echo "INSERT INTO shardLibraries VALUES (1, 'user', '2000-01-01 00:00:00', 0)" | $MYSQL zotero_shard_1
-echo "INSERT INTO shardLibraries VALUES (2, 'group', '2000-01-01 00:00:00', 0)" | $MYSQL zotero_shard_2
+echo "INSERT INTO shardLibraries VALUES (1, 'user', CURRENT_TIMESTAMP, 0)" | $MYSQL zotero_shard_1
+echo "INSERT INTO shardLibraries VALUES (2, 'group', CURRENT_TIMESTAMP, 0)" | $MYSQL zotero_shard_2
 
 # Load in schema on id servers
 $MYSQL zotero_ids < ids.sql
