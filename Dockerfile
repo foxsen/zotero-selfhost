@@ -16,7 +16,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install apt-utils
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install pkg-config re2c
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install apache2 libapache2-mod-php7.2 sudo rsyslog wget mysql-client curl unzip
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y install php7.2-cli php7.2-xml php7.2-mysql php7.2-pgsql php7.2-json php7.2-curl php7.2-mbstring php7.2-intl php7.2-redis php7.2-dev composer vim php-http-request2 php-igbinary php-memcached
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install php7.2-cli php7.2-xml php7.2-mysql php7.2-pgsql php7.2-json php7.2-curl php7.2-mbstring php7.2-intl php7.2-redis php7.2-dev composer vim php-http-request2 php-memcached php-igbinary
 RUN DEBIAN_FRONTEND=noninteractive pecl channel-update pecl.php.net
 
 RUN sed -i 's/memory_limit = 128M/memory_limit = 1G/g' /etc/php/7.2/apache2/php.ini
@@ -28,9 +28,9 @@ RUN sed -i 's/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT/error_report
 
 # Setup igbinary
 #RUN DEBIAN_FRONTEND=noninteractive pecl install igbinary
-#RUN echo "extension=igbinary.so" > /etc/php/7.2/mods-available/igbinary.ini
-#RUN ln -sf /etc/php/7.2/mods-available/igbinary.ini /etc/php/7.2/cli/conf.d/20-igbinary.ini
-#RUN ln -sf /etc/php/7.2/mods-available/igbinary.ini /etc/php/7.2/apache2/conf.d/20-igbinary.ini
+RUN echo "extension=igbinary.so" > /etc/php/7.2/mods-available/igbinary.ini
+RUN ln -sf /etc/php/7.2/mods-available/igbinary.ini /etc/php/7.2/cli/conf.d/20-igbinary.ini
+RUN ln -sf /etc/php/7.2/mods-available/igbinary.ini /etc/php/7.2/apache2/conf.d/20-igbinary.ini
 
 # Setup Memcached
 #RUN DEBIAN_FRONTEND=noninteractive apt-get -y install libmemcached11 libmemcachedutil2 build-essential libmemcached-dev libz-dev libxml2-dev zlib1g-dev libicu-dev g++
@@ -79,6 +79,7 @@ ENTRYPOINT ["/entrypoint.sh"]
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install npm nodejs
 
 COPY ./src/server/dataserver/ /var/www/zotero/
+RUN composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 RUN cd /var/www/zotero && composer install
 
 COPY ./src/server/stream-server/ /var/www/stream-server/
