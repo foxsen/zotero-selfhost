@@ -25,9 +25,9 @@ Here is my current understanding of Zotero:
 
 Overall Zotero is a client/server system with some server components and some client components, both servers and clients rely on some other aiding components.
 
-The core of server part is dataserver, which provides zotero API services. Dataserver is implemented in PHP, structure data is stored in mysql database, while documents and fulltext data are stored using amazon S3 sdk. Dataserver uses localstack for SNS/SQS, memcached to cached data to reduce pressure of database server, elasticsearch to support searches, redis to do request rate limit(seems to handle notifications too), and optional StatsD for statistics(I guess). 
+The core of server part is dataserver, which provides zotero API services. Dataserver is implemented in PHP, structure data is stored in mysql database, while documents and fulltext data are stored using amazon S3 storage or webdav. Dataserver uses localstack for SNS/SQS, memcached to cached data to reduce pressure of database server, elasticsearch to support searches, redis to do request rate limit(seems to handle notifications too), and optional StatsD for statistics(I guess). 
 
-There are two types of clients. One is the zotero client downloadable from zotero.org. It is a native executable built upon XULRunner. This client is versatile. First, it provides interfaces for us to operate(import/export/edit/search/organize etc.) on our materials and stores local data in a SQLite database(by default in ~/Zotero/). Second, it is extensible. We can run javascript code in a console(Tools->Developer->Run JavaScript) or write a plugin to interact with the client UI and operate on local data. Third, it has a builtin HTTP server to import data from connectors(browser plugin that sense data from web pages). Fourth, it provides a word processor integration API. Fiveth, it contains a lots of translators that can help to extrace contents from web pages and export them to other formats. The other one is web-library that provides browser based interface.
+There are two types of clients. One is the zotero client downloadable from zotero.org. It is a native executable built upon XULRunner. This client is versatile. First, it provides interfaces for us to operate(import/export/edit/search/organize etc.) on our materials and stores local data in a SQLite database(by default in ~/Zotero/). Second, it is extensible. We can run javascript code in a console(Tools->Developer->Run JavaScript) or write a plugin to interact with the client UI and operate on local data. Third, it has a builtin HTTP server to import data from connectors(browser plugin that sense data from web pages). Fourth, it provides a word processor integration API. Fiveth, it contains a lots of translators that can help to extrace contents from web pages and export them to other formats. The other one is web-library that provides browser based interface. Note: for API server, web-library is a client using its services; but for users, web-library is a server that providing web base interface for them to use zotero.
 
 ### important concepts
 
@@ -41,12 +41,8 @@ There are two types of clients. One is the zotero client downloadable from zoter
 
 ### Dependencies and source code
 
-*Install dependencies for client build*:
-```bash
-$ sudo apt install npm
-```
-
-*Clone the repository (with **--recursive** because there are multiple level of submodules)*:
+* make sure docker and docker-compose are installed in your build host.
+* Clone the repository (with **--recursive** because there are multiple level of submodules)*:
 ```bash
 $ mkdir /path/to/your/app && cd /path/to/your/app
 $ git clone --recursive <reporitory url here>
@@ -61,11 +57,11 @@ docker-compose will pull(mysql, minio, redis, localstack, elasticsearch, memcach
 
 app-zotero is the main container for dataserver/stream-server/tinymce-clean-server.
 
-### Initialize databases
+### Initialize 
 
-*Initialize databases*:
+*Initialize databases, s3 buckets and SNS*:
 ```bash
-$ ./bin/init.sh
+$ ./bin/init.sh  //run after docker-compose up
 $ cd ..
 ```
 
@@ -74,7 +70,7 @@ $ cd ..
 | Name          | URL                                           |
 | ------------- | --------------------------------------------- |
 | Zotero API    | http://localhost:8080                         |
-| Stream ws     | ws://localhost:8081                         |
+| Stream ws     | ws://localhost:8081                           |
 | S3 Web UI     | http://localhost:8082                         |
 | PHPMyAdmin    | http://localhost:8083                         |
 
@@ -88,7 +84,37 @@ $ cd ..
 
 ## Client installation
 
+The official client source is almost usable. Only a few patches are needed
+to change hard-coded *zotero.org* into your urls.  Patches are put in 
+./src/patches/zotero-client/. 
+
+
+In fact, you can direct download the clients from zotero website, and change
+the file in zoter.jar:
+
+```bash
+$ unpack Zoter Client, cd into the directory
+$ mkdir tmp && cd ./tmp
+$ jar xvf ../zotero.jar
+$ ... edit the ./resource/config.js file here
+$ rm -f ../zotero.jar && jar cvf ../zotero.jar .
+```bash
+
+If you are running with both server and client in your machine, only change
+./resource/config.js is enough. Otherwise, you need to change this file too:
+chrome/content/zotero/xpcom/storage/zfs.js. Because the dataserver is modified 
+to return S3 url of http://localhost:8080, client will try to use that to access
+the S3 storage and fail with S3 return 0 errors. The related patches show how to
+change, but remember to change the domain name to your real one.
+
+The build process is the same as official one.
+
 ### Dependencies and source code
+
+*Install dependencies for client build*:
+```bash
+$ sudo apt install npm
+```
 
 For [m|l|w]: m=Mac, w=Windows, l=Linux
 
@@ -120,12 +146,23 @@ $ ./staging/Zotero_VERSION/zotero(.exe)
 
 ## deployment
 
-TODO.
+For personal usage, you can run the server and client in the same machine and
+it should be working. The source code is modified for that.
+
+For intranet usage, change the client side's url, replace localhost with server
+IP.
+
+For internet usage, you can setup a website with ssl enabled, and use reverse 
+proxy to get it back to internal servers. Of course, you can enable SSL and deploy
+it directly in external servers, but I have not tried that.
 
 ## server management
 
-TODO.
+There are no user management interface for now. You can use the script
+./bin/create-user.sh to add some users.
 
 ## TODO
 
-### user management 
+* Add web-library and user management interface. Web-library is working with
+correct setting of urls, user & key. A simple login/register interface will
+bring the experience almost the same with the official one.
