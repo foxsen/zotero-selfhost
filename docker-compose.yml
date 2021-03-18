@@ -40,6 +40,7 @@ services:
       - "./config/dbconnect.inc.php:/var/www/zotero/include/config/dbconnect.inc.php:ro"
       - "./config/default.js:/var/www/stream-server/config/default.js:ro"
       - "./config/dataserver-scripts/create-user.sh:/var/www/zotero/admin/create-user.sh:ro"
+      - "./config/dataserver-scripts/list-user.sh:/var/www/zotero/admin/list-user.sh:ro"
       - "./config/dataserver-scripts/www.sql:/var/www/zotero/misc/www.sql:ro"
       - "./config/dataserver-scripts/init-mysql.sh:/var/www/zotero/misc/init-mysql.sh:ro"
     environment:
