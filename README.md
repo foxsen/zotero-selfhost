@@ -48,6 +48,12 @@ $ mkdir /path/to/your/app && cd /path/to/your/app
 $ git clone --recursive <reporitory url here>
 $ cd zotero-selfhost
 ```
+* To faciliate future updates, necessary changes to official code are maintained as patches in
+src/patches/, run in top level directory, run ./utils/patch.sh to apply them.
+
+```bash
+./utils/patch.sh
+```
 
 *Configure and run*:
 ```bash
@@ -104,8 +110,27 @@ If you are running with both server and client in your machine, only change
 ./resource/config.js is enough. Otherwise, you need to change this file too:
 chrome/content/zotero/xpcom/storage/zfs.js. Because the dataserver is modified 
 to return S3 url of http://localhost:8080, client will try to use that to access
-the S3 storage and fail with S3 return 0 errors. The related patches show how to
+the S3 storage and fail with S3 return 0 errors. The following patch shows how to
 change, but remember to change the domain name to your real one.
+
+```
+diff --git a/chrome/content/zotero/xpcom/storage/zfs.js b/chrome/content/zotero/xpcom/storage/zfs.js
+index 794b5cbad..ff27a001d 100644
+--- a/chrome/content/zotero/xpcom/storage/zfs.js
++++ b/chrome/content/zotero/xpcom/storage/zfs.js
+@@ -636,6 +636,10 @@ Zotero.Sync.Storage.Mode.ZFS.prototype = {
+ 		}
+ 		
+ 		var blob = new Blob([params.prefix, file, params.suffix]);
++
++		// FIXME: change https://zotero.your.domain to your server link
++		var url = params.url.replace(/http:\/\/localhost:8082/, 'https://zotero.your.domain');
++		params.url = url;
+ 		
+ 		try {
+ 			var req = yield Zotero.HTTP.request(
+
+```
 
 The build process is the same as official one.
 

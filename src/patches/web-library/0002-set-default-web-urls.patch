@@ -1,17 +1,8 @@
-From dfcf31cbb070684ccd92fc9477cfe1d3e7fce3c2 Mon Sep 17 00:00:00 2001
-From: Zhang Fuxin <fxzhang@ict.ac.cn>
-Date: Thu, 4 Mar 2021 23:22:12 +0800
-Subject: [PATCH 2/3] set default web urls
-
----
- src/js/constants/defaults.js | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
 diff --git a/src/js/constants/defaults.js b/src/js/constants/defaults.js
-index 8a3b57c2..3d6d61b7 100644
+index 2f7e9fa8..24d8b32b 100644
 --- a/src/js/constants/defaults.js
 +++ b/src/js/constants/defaults.js
-@@ -2,12 +2,12 @@ import { coreCitationStyles } from '../../../data/citation-styles-data.json';
+@@ -2,13 +2,13 @@ import { coreCitationStyles } from '../../../data/citation-styles-data.json';
  export { version } from '../../../data/version.json';
  
  export const apiConfig = {
@@ -21,12 +12,10 @@ index 8a3b57c2..3d6d61b7 100644
  };
 -export const websiteUrl = 'https://www.zotero.org/';
 +export const websiteUrl = 'http://localhost:8080/';
+ export const buyStorageUrl = websiteUrl + 'storage?ref=usb';
  export const stylesSourceUrl = 'https://www.zotero.org/styles-files/styles.json';
 -export const streamingApiUrl = 'wss://stream.zotero.org/';
 +export const streamingApiUrl = 'ws://localhost:8081/';
  export const translateUrl = 'location' in window ? window.location.origin : '';
  export const tinymceRoot = '/static/other/tinymce/';
  export const maxColoredTags = 9;
--- 
-2.25.1
-
