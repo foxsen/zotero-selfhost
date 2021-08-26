@@ -104,7 +104,7 @@ $ mkdir tmp && cd ./tmp
 $ jar xvf ../zotero.jar
 $ ... edit the ./resource/config.js file here
 $ rm -f ../zotero.jar && jar cvf ../zotero.jar .
-```bash
+```
 
 If you are running with both server and client in your machine, only change
 ./resource/config.js is enough. Otherwise, you need to change this file too:
